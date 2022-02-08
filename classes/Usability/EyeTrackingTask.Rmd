@@ -12,6 +12,7 @@ The data has been cleaned a bit already. If you need the raw data for your analy
 ```{r}
 
 df <- read.csv("clean_data.csv")
+tam <- read.csv("TAM_data_clean.csv")
 
 df$website <- as.factor(df$website)
 df$event <- as.factor(df$event)
@@ -65,7 +66,10 @@ Although the data has been cleaned, you might need to transform some variables d
 For example, if you are interested in synchronicity between gaze velocity and mouse velocity, you will need to calculate the velocity of mouse movements. (Not that you should be interested in that. Really.)
 ```{r}
 
-## CLEANING AND PROCESSING HERE - if needed ##
+df_nevent <- df %>% group_by(website, event, name) %>% 
+  summarize('number' = max(event_n),
+            'mean_dur' = mean(event_d))
+
 
 ```
 
@@ -86,7 +90,13 @@ Here are some suggestions:
 5) other? 
 
 ```{r}
-#Test your hypothesis here :D 
+mdl_nsaccade <- lmer(number ~ website + (1|name), data = df_nevent[df_nevent$event == 'saccade',])
+
+summary(mdl_nsaccade)
 ```
 
+```{r}
+ggplot(data = df_nevent[df_nevent$event == 'saccade',], aes(x = number)) +
+  geom_histogram() + facet_wrap(~website) + theme_bw()
+```
 
