@@ -14,11 +14,11 @@ df = pd.read_csv('wally_positions.csv', index_col=0)
 
 ## app
 st.title('Where is Wally?')
-with st.expander('Description'):
-    st.write('''This app includes 22 different images in which you can find Wally. 
-    When you have found Wally or when you have given up, you have the possibility to see where the model from the
-    deeplearning project [HereIsWally](https://github.com/tadejmagajna/HereIsWally) have found Wally. 
-    Additionally, the app gives possibility to provide feedback to the predictions of the model.''')
+# with st.expander('Description'):
+#     st.write('''This app includes 22 different images in which you can find Wally. 
+#     When you have found Wally or when you have given up, you have the possibility to see where the model from the
+#     deeplearning project [HereIsWally](https://github.com/tadejmagajna/HereIsWally) have found Wally. 
+#     Additionally, the app gives possibility to provide feedback to the predictions of the model.''')
 
 # choose image
 image_number = st.selectbox('Select image', sorted([im for im in df['image']]))
