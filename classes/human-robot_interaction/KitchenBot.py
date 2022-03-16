@@ -51,7 +51,7 @@ class ChatBot():
         print("ai --> ", text)
         speaker = gTTS(text=text, lang="en", slow=False)
         speaker.save("res.mp3")
-        os.system("afplay res.mp3")  #mac->afplay | windows->start
+        os.system("start res.mp3")  #mac->afplay | windows->start
         os.remove("res.mp3")
 
     def wake_up(self, text):
