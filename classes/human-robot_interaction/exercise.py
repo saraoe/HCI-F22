@@ -13,6 +13,8 @@ import msvcrt
 import time
 import sys
 
+import argparse
+
 class TimeoutExpired(Exception):
     pass
 
@@ -51,6 +53,11 @@ class ChatBot():
         return f'The time is {time}'
 
 if __name__=='__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--timeout', type=int, default=None, required=False)
+    args = parser.parse_args()
+    timeout = args.timeout
+
     ai = ChatBot(name='edd')
     nlp = transformers.pipeline("conversational", model="microsoft/DialoGPT-medium")
 
@@ -58,13 +65,15 @@ if __name__=='__main__':
     goodbyes = ['goodbye', 'bye', 'goodnight', 'see you', 'exit', 'quit']
     end = False
     while not end:
-        # text = input(f"Talk to {ai.name}: ")
-        # ai.speech_to_text(text)
-        try:
-            text = input_with_timeout(f"Talk to {ai.name}: ", 10)
-        except TimeoutExpired:
-            text = '** Awkward silence **'
-            res = "you have been quiet for some time now - if you don't have anything else to ask, you can just say goodbye."
+        if not timeout:
+            text = input(f"Talk to {ai.name}: ")
+            ai.speech_to_text(text)
+        else:
+            try:
+                text = input_with_timeout(f"Talk to {ai.name}: ", timeout)
+            except TimeoutExpired:
+                text = '** Awkward silence **'
+                res = "you have been quiet for some time now - if you don't have anything else to ask, you can just say goodbye."
         ai.speech_to_text(text)
         print("me --> ", text)
 
@@ -80,7 +89,7 @@ if __name__=='__main__':
             I can help educate you on the things that may be awkward or hard to talk about with your friends and family. 
             Please feel free to ask my about anything related to the topic, and I will try and answer the best I can.
             
-            If you don't feel like you have any more questios, simply say goodbye and I will leave you to it.
+            If you don't feel like you have any more questions, simply say goodbye and I will leave you to it.
             '''
         
         ## ask for the time
@@ -139,7 +148,7 @@ if __name__=='__main__':
             res = np.random.choice(["you're welcome!","anytime!"])
 
         # Try and talk
-        else:
+        elif ai.text != '** awkward silence **':
             chat = nlp(transformers.Conversation(ai.text), pad_token_id=50256)
             res = str(chat)
             res = "I'm afraid I don't understand your question in relation to my area of expertise. Please rephrase - but if you just want to chat, then: " + res[res.find("bot >> ")+6:].strip()
